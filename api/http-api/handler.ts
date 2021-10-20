@@ -33,3 +33,18 @@ export const customResponse: APIGatewayProxyHandlerV2 = async (event) => {
     return errorHandler(error, response);
   }
 };
+
+export const loginPostRespone: APIGatewayProxyHandlerV2 = async (event) => {
+  log(event);
+
+  const response = new Response({
+    'Access-Controll-Allow-Origin': '*',
+    'Content-Type': 'application/json',
+  });
+
+  try {
+    return response.create(200, 'login response');
+  } catch (error) {
+    return errorHandler(error, response);
+  }
+};
