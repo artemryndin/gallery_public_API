@@ -16,5 +16,5 @@ const UserSchema = new Schema({
   },
 });
 
-const UsersModel = mongoose.model('Test_users', UserSchema);
+const UsersModel = mongoose.models.Test_users || mongoose.model('Test_users', UserSchema);
 export { UsersModel };

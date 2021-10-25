@@ -15,11 +15,11 @@ export const examplesConfig: AWSPartitial = {
   },
   functions: {
     loginGetResponse: {
-      handler: 'api/my_api/login_handlers.loginGetResponse',
+      handler: 'api/gallery/login/handler.loginGetRequestHandler',
       memorySize: 128,
       events: [
         {
-          httpApi: {
+          http: {
             path: '/login',
             method: 'get',
           },
@@ -28,11 +28,11 @@ export const examplesConfig: AWSPartitial = {
     },
 
     loginPostResponse: {
-      handler: 'api/my_api/login_handlers.loginPostResponse',
+      handler: 'api/gallery/login/handler.loginPostRequestHandler',
       memorySize: 128,
       events: [
         {
-          httpApi: {
+          http: {
             path: '/login',
             method: 'post',
           },
@@ -41,7 +41,7 @@ export const examplesConfig: AWSPartitial = {
     },
 
     galleryGetResponse: {
-      handler: 'api/my_api/gallery_handlers.getGallery',
+      handler: 'api/gallery/gallery/handler.getGalleryPage',
       memorySize: 128,
       events: [
         {
@@ -49,32 +49,42 @@ export const examplesConfig: AWSPartitial = {
             path: '/gallery',
             method: 'get',
             authorizer: 'jwtauth',
+            cors: true,
           },
         },
       ],
     },
 
     uploadPicture: {
-      handler: 'api/my_api/upload_handler.uploadPicture',
+      handler: 'api/gallery/upload/handler.uploadPicture',
       memorySize: 128,
       events: [
         {
-          httpApi: {
+          http: {
             path: '/upload',
             method: 'post',
+            integration: 'lambda-proxy',
+            cors: true,
+            authorizer: 'jwtauth',
           },
         },
       ],
     },
 
     signUpResponse: {
-      handler: 'api/my_api/sign_up_handler.signUp',
+      handler: 'api/gallery/sign_up/handler.signUpHandler',
       memorySize: 128,
       events: [
         {
-          httpApi: {
+          http: {
             path: '/signup',
             method: 'post',
+            cors: true,
+            response: {
+              headers: {
+                'Access-Control-Allow-Credentials': '*',
+              },
+            },
           },
         },
       ],
@@ -136,10 +146,10 @@ export const examplesConfig: AWSPartitial = {
     //       },
     //     ],
     //   },
-    exampleAuthorizerHttpApi: {
-      handler: 'api/auth/handler.httpApiSimple',
-      memorySize: 128,
-    },
+    // exampleAuthorizerHttpApi: {
+    //   handler: 'api/auth/handler.httpApiSimple',
+    //   memorySize: 128,
+    // },
     //   exampleAuthorizerRestApi: {
     //     handler: 'api/auth/handler.authentication',
     //     memorySize: 128,

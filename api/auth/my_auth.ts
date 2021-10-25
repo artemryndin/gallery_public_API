@@ -1,15 +1,11 @@
 import { config } from 'dotenv';
 config();
 import { log } from '@helper/logger';
-import {
-  APIGatewayAuthorizerSimpleResult,
-  APIGatewayRequestAuthorizerHttpApiPayloadV2Event,
-} from '@interfaces/api-gateway-authorizer';
 import { APIGatewayAuthorizerResult, APIGatewayTokenAuthorizerWithContextHandler } from 'aws-lambda';
-import { Handler } from 'aws-lambda/handler';
 import * as JWT from 'jsonwebtoken';
-import { UsersModel } from '@models/MongoDB/db_user_schema';
+import { UsersModel } from '@models/MongoDB/user.model';
 import { Response } from '@helper/http-api/response';
+import { getEnv } from '@helper/environment';
 
 const UNAUTHORIZED = new Error('Unauthorized');
 
@@ -18,8 +14,8 @@ export const myJWTAuth = async (event) => {
 
   const token = event.authorizationToken.split(' ')[1];
   try {
-    let user = JWT.verify(token, process.env.TOKEN_KEY);
-    return generatePolicy('user', 'Allow', '*', { user: user.email });
+    let user = JWT.verify(token, getEnv('TOKEN_KEY'));
+    return generatePolicy('user', 'Allow', '*', { user: user.email, body: event.body });
   } catch (err) {
     return generatePolicy('user', 'Deny', '*', {});
   }
