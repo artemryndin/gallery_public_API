@@ -1,5 +1,6 @@
 import type { AWS } from '@serverless/typescript';
-import { examplesConfig } from './config/serverless/parts/examples';
+import { authenticationConfig } from 'config/serverless/parts/auth';
+import { galleryConfig } from 'config/serverless/parts/gallery';
 import { joinParts } from './config/serverless/utils';
 
 const masterConfig: AWS = {
@@ -55,69 +56,15 @@ const masterConfig: AWS = {
       test: '${file(./kms_key.yml):test}',
       prod: '${file(./kms_key.yml):prod}',
     },
-    // s3: {
-    //   host: '0.0.0.0',
-    //   port: 8001,
-    //   directory: '/tmp',
-    // },
-    // capacities: [
-    //   {
-    //     table: 'UsersTable',
-    //     read: {
-    //       minimum: 5,
-    //       maximum: 100,
-    //       usage: 0.75,
-    //     },
-    //     write: {
-    //       minimum: 5,
-    //       maximum: 100,
-    //       usage: 0.75,
-    //     },
-    //   },
-    //   {
-    //     table: 'JobsTable',
-    //     index: ['ProducerIdGlobalIndex', 'CrewIdGlobalIndex'],
-    //     read: {
-    //       minimum: 5,
-    //       maximum: 100,
-    //       usage: 0.75,
-    //     },
-    //     write: {
-    //       minimum: 5,
-    //       maximum: 100,
-    //       usage: 0.75,
-    //     },
-    //   },
-    // ],
-    // 'serverless-offline-sns': {
-    //   port: 4002,
-    //   debug: false,
-    // },
-    // 'serverless-offline-sqs': {
-    //   autoCreate: true,
-    //   apiVersion: '2012-11-05',
-    //   endpoint: 'http://0.0.0.0:9324',
-    //   region: '${file(./env.yml):${self:provider.stage}.REGION}',
-    //   accessKeyId: 'root',
-    //   secretAccessKey: 'root',
-    //   skipCacheInvalidation: false,
-    // },
   },
+
   plugins: [
     '@redtea/serverless-env-generator',
     'serverless-webpack',
     'serverless-offline-sqs',
     'serverless-offline',
-    // 'serverless-offline-sns',
-    // 'serverless-s3-local',
     'serverless-prune-plugin',
   ],
 };
 
-module.exports = joinParts(masterConfig, [
-  // restApiCorsConfig,
-  // getMediaInfoConfig,
-  // jobsConfig,
-  // usersConfig,
-  examplesConfig,
-]);
+module.exports = joinParts(masterConfig, [authenticationConfig, galleryConfig]);
