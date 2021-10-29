@@ -1,12 +1,11 @@
 import * as crypto from 'crypto';
-
-import { connectDB } from '@services/db_connection';
-import { UsersModel } from '@models/MongoDB/user.model';
-import { AuthenticationResponse, SignUpResponse } from './login.interface';
+import { AuthenticationResponse, SignUpResponse } from './auth.interface';
 import { UserCredentials } from '@interfaces/user-credentials.interface';
-import { LoginService } from './login.service';
+import { LoginService } from './auth.service';
 import { getEnv } from '@helper/environment';
-import { UserDBCreds } from './login.interface';
+import { ddbClient } from '@services/ddbClient';
+import { GetItemCommand } from '@aws-sdk/client-dynamodb';
+import { errorHandler } from '@helper/http-api/error-handler';
 
 export class LoginManager {
   private readonly service: LoginService;
@@ -19,26 +18,39 @@ export class LoginManager {
   }
 
   async checkUserAndSignJWT(user: UserCredentials): Promise<AuthenticationResponse> {
-    await connectDB;
-    let usersHashedPass = this.encryptUsersPassword(user.password);
-    let userDB: UserDBCreds = await UsersModel.findOne({ email: user.email });
-    console.log(`userDB: ${userDB}`);
-    if (userDB.passwordHash === usersHashedPass) {
-      let JWTToken: string = this.service.signJWTToken(user.email);
-      return {
-        statusCode: 200,
-        content: { token: JWTToken },
-      };
-    } else {
-      return {
-        statusCode: 404,
-        content: { errorMessage: 'User not found' },
-      };
+    if (!user) {
+      throw new Error('User not defined');
+    }
+
+    try {
+      if (await this.checkUserPresenseInDB(user)) {
+        return this.service.signJWTToken(user.email);
+      } else return { statusCode: 401, content: { errorMessage: 'Invalid credentials' } };
+    } catch (error) {
+      errorHandler(error);
+      return { statusCode: 500, content: { errorMessage: error } };
     }
   }
 
   async signUp(user: UserCredentials): Promise<SignUpResponse> {
     let hashedPass = this.encryptUsersPassword(user.password);
     return await this.service.signUp(user.email, hashedPass);
+  }
+
+  async checkUserPresenseInDB(userData: UserCredentials): Promise<boolean | undefined> {
+    let params = {
+      TableName: 'aryndin_gallery',
+      Key: {
+        email: { S: userData.email },
+      },
+    };
+
+    let hashedPassword = crypto
+      .createHmac('sha256', getEnv('PASSWORD_ENC_KEY'))
+      .update(userData.password)
+      .digest('hex');
+    let userDB = await ddbClient.send(new GetItemCommand(params));
+
+    return userDB.Item && hashedPassword == userDB.Item.passwordHash.S;
   }
 }

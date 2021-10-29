@@ -41,7 +41,7 @@ export const uploadPicture: APIGatewayProxyHandlerV2 = async (event) => {
     //@ts-ignore
     const payload = await multipartParser.parse(event);
     //@ts-ignore
-    const user: string = event.requestContext.authorizer.claims.user;
+    const user: string = event.requestContext.authorizer?.jwt?.claims.user;
 
     const result: UploadResponse = await manager.uploadPicture(
       payload.files[0].content,

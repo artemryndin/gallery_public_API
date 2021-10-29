@@ -1,8 +1,7 @@
 import { createResponse } from '@helper/http-api/response';
 import { APIGatewayProxyHandlerV2 } from 'aws-lambda';
-import { LoginManager } from './login.manager';
-import { SignUpResponse } from 'api/auth/login.interface';
-import { AuthenticationResponse } from './login.interface';
+import { LoginManager } from './auth.manager';
+import { AuthenticationResponse, SignUpResponse } from './auth.interface';
 import { UserCredentials } from '@interfaces/user-credentials.interface';
 import { errorHandler } from '@helper/http-api/error-handler';
 

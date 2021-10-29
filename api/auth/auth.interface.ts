@@ -11,12 +11,6 @@ export interface AuthenticationResponse {
   content: JWTToken | ErrorMessage;
 }
 
-export interface UserDBCreds {
-  _id: any;
-  email: string;
-  passwordHash: string;
-}
-
 export interface SignUpErrorMessage {
   errorMessage: string;
 }

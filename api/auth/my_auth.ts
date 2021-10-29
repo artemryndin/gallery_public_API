@@ -1,10 +1,8 @@
 import { config } from 'dotenv';
 config();
 import { log } from '@helper/logger';
-import { APIGatewayAuthorizerResult, APIGatewayTokenAuthorizerWithContextHandler } from 'aws-lambda';
+import { APIGatewayAuthorizerResult } from 'aws-lambda';
 import * as JWT from 'jsonwebtoken';
-import { UsersModel } from '@models/MongoDB/user.model';
-import { Response } from '@helper/http-api/response';
 import { getEnv } from '@helper/environment';
 
 const UNAUTHORIZED = new Error('Unauthorized');

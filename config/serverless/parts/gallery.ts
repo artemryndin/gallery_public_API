@@ -15,7 +15,7 @@ export const galleryConfig: AWSPartitial = {
   },
 
   functions: {
-    galleryGetResponse: {
+    getGalleryPicture: {
       handler: 'api/gallery/handler.getGalleryPage',
       memorySize: 128,
       events: [

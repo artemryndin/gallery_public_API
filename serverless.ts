@@ -1,10 +1,12 @@
 import type { AWS } from '@serverless/typescript';
-import { authenticationConfig } from 'config/serverless/parts/auth';
-import { galleryConfig } from 'config/serverless/parts/gallery';
+import { authenticationConfig } from './config/serverless/parts/auth';
+import { galleryConfig } from './config/serverless/parts/gallery';
 import { joinParts } from './config/serverless/utils';
+import { dynamoDBConfig } from './config/serverless/parts/dynamodb';
+import { s3BucketConfig } from './config/serverless/parts/s3';
 
 const masterConfig: AWS = {
-  service: 'template-sls',
+  service: 'aryndin-sls',
   configValidationMode: 'warn',
   variablesResolutionMode: '20210326',
   unresolvedVariablesNotificationMode: 'error',
@@ -67,4 +69,4 @@ const masterConfig: AWS = {
   ],
 };
 
-module.exports = joinParts(masterConfig, [authenticationConfig, galleryConfig]);
+module.exports = joinParts(masterConfig, [authenticationConfig, galleryConfig, dynamoDBConfig, s3BucketConfig]);
