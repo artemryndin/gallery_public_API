@@ -33,7 +33,7 @@ export class GalleryService {
       log(galleryQuery);
       let dbResponse = await ddbClient.send(new QueryCommand(params));
       let images: Array<string | undefined> = dbResponse.Items ? dbResponse.Items.map((item) => item.s3link.S) : [];
-      let adminImages: Array<string | undefined> = galleryQuery.filter ? await this.getGalleryPictureAdmin() : [];
+      let adminImages: Array<string | undefined> = galleryQuery.filter ? [] : await this.getGalleryPictureAdmin();
       let galleryResponse: GalleryPayload = this.createGalleryResponse(
         images,
         adminImages,
