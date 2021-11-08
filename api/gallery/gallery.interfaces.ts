@@ -26,5 +26,10 @@ export interface UploadErrorMessage {
 
 export interface UploadResponse {
   statusCode: number;
-  message: UploadMessage | UploadErrorMessage;
+  message: UploadMessage | UploadErrorMessage | string;
+}
+
+export interface ImageObject {
+  filename: string;
+  ContentType: string;
 }

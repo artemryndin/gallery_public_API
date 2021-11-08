@@ -12,15 +12,19 @@ export class LoginService {
 
   async signUp(userEmail: string, hashedPassword: string): Promise<SignUpResponse> {
     let params = {
-      TableName: 'aryndin_gallery',
+      TableName: getEnv('GALLERY_TABLE'),
       Item: {
         email: { S: userEmail },
+        user_data: { S: 'user' },
         passwordHash: { S: hashedPassword },
       },
     };
 
     let data = await ddbClient.send(
-      new GetItemCommand({ TableName: params.TableName, Key: { email: params.Item.email } })
+      new GetItemCommand({
+        TableName: params.TableName,
+        Key: { email: params.Item.email, user_data: params.Item.user_data },
+      })
     );
     if (!data.Item) {
       const user = await ddbClient.send(new PutItemCommand(params));

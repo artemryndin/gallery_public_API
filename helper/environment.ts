@@ -18,6 +18,7 @@ const envs: Record<string, string | undefined> = {
   TOKEN_KEY: process.env.TOKEN_KEY,
   PASSWORD_ENC_KEY: process.env.PASSWORD_ENC_KEY,
   GALLERY_BUCKET: process.env.GALLERY_BUCKET,
+  GALLERY_TABLE: process.env.GALLERY_TABLE,
 };
 export type Stage = 'local' | 'dev' | 'test' | 'prod';
 

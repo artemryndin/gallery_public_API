@@ -33,16 +33,24 @@ export const dynamoDBConfig: AWSPartitial = {
         DeletionPolicy: 'Retain',
         Type: 'AWS::DynamoDB::Table',
         Properties: {
-          TableName: 'aryndin_gallery',
+          TableName: 'aryndin_gallery_v2',
           KeySchema: [
             {
               AttributeName: 'email',
               KeyType: 'HASH',
             },
+            {
+              AttributeName: 'user_data',
+              KeyType: 'RANGE',
+            },
           ],
           AttributeDefinitions: [
             {
               AttributeName: 'email',
+              AttributeType: 'S',
+            },
+            {
+              AttributeName: 'user_data',
               AttributeType: 'S',
             },
           ],

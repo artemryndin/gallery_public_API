@@ -39,9 +39,10 @@ export class LoginManager {
 
   async checkUserPresenseInDB(userData: UserCredentials): Promise<boolean | undefined> {
     let params = {
-      TableName: 'aryndin_gallery',
+      TableName: getEnv('GALLERY_TABLE'),
       Key: {
         email: { S: userData.email },
+        user_data: { S: 'user' },
       },
     };
 

@@ -1,10 +1,9 @@
-import * as multipartParser from 'lambda-multipart-parser';
 import { GalleryManager } from './gallery.manager';
 import { GalleryRequestParams, UploadResponse } from './gallery.interfaces';
 import { createResponse } from '@helper/http-api/response';
 import { errorHandler } from '@helper/http-api/error-handler';
-import { log } from 'console';
-import { APIGatewayProxyHandlerV2 } from 'aws-lambda';
+import { APIGatewayProxyHandlerV2, S3Event } from 'aws-lambda';
+import { log } from '@helper/logger';
 
 export const getGalleryPage: APIGatewayProxyHandlerV2 = async (event) => {
   log(event);
@@ -18,7 +17,7 @@ export const getGalleryPage: APIGatewayProxyHandlerV2 = async (event) => {
         limit: Number(QueryStringParams!.limit) ?? 5,
         filter: QueryStringParams!.filter === 'true' ? true : false,
         //@ts-ignore
-        user: event.requestContext.authorizer.claims.user.toString(),
+        user: event.requestContext.authorizer.user,
       };
 
       const manager = new GalleryManager();
@@ -33,23 +32,29 @@ export const getGalleryPage: APIGatewayProxyHandlerV2 = async (event) => {
   }
 };
 
-export const uploadPicture: APIGatewayProxyHandlerV2 = async (event) => {
+export const getS3UploadLink: APIGatewayProxyHandlerV2 = async (event) => {
   log(event);
 
   try {
     const manager = new GalleryManager();
     //@ts-ignore
-    const payload = await multipartParser.parse(event);
-    //@ts-ignore
-    const user: string = event.requestContext.authorizer?.jwt?.claims.user;
-
-    const result: UploadResponse = await manager.uploadPicture(
-      payload.files[0].content,
-      payload.files[0].filename,
-      user
-    );
+    const user: string = event.requestContext.authorizer.user;
+    console.log(`User: ${user}`);
+    const result: UploadResponse = await manager.getS3SignedLink(user);
     return createResponse(result.statusCode, result.message);
   } catch (error) {
     return errorHandler(error);
+  }
+};
+
+export const savePictureToDB = async (event: S3Event) => {
+  log(event);
+
+  try {
+    const manager = new GalleryManager();
+    await manager.savePictureToDB(event);
+    return;
+  } catch (err) {
+    log({ error: 'savePictureToDB handler failed' });
   }
 };
