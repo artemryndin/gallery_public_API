@@ -6,6 +6,7 @@ import { getEnv } from '@helper/environment';
 import { ddbClient } from '@services/ddbClient';
 import { GetItemCommand } from '@aws-sdk/client-dynamodb';
 import { errorHandler } from '@helper/http-api/error-handler';
+import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 export class LoginManager {
   private readonly service: LoginService;
@@ -51,7 +52,8 @@ export class LoginManager {
       .update(userData.password)
       .digest('hex');
     let userDB = await ddbClient.send(new GetItemCommand(params));
+    let userDBUnmarshalled = unmarshall(userDB.Item!);
 
-    return userDB.Item && hashedPassword == userDB.Item.passwordHash.S;
+    return userDB.Item && hashedPassword == userDBUnmarshalled.passwordHash;
   }
 }

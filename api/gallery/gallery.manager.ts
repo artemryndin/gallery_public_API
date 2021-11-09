@@ -1,6 +1,6 @@
 import { log } from '@helper/logger';
 import { S3Event } from 'aws-lambda/trigger/s3';
-import { GalleryRequestParams, GalleryResponse } from './gallery.interfaces';
+import { GalleryRequestParams, GalleryResponse, UploadResponse } from './gallery.interfaces';
 import { GalleryService } from './gallery.service';
 
 export class GalleryManager {
@@ -14,7 +14,7 @@ export class GalleryManager {
     return await this.service.getGalleryPage(queryParams);
   }
 
-  async getS3SignedLink(user: string) {
+  async getS3SignedLink(user: string): Promise<UploadResponse> {
     return this.service.returnSignedPutURL(user);
   }
 

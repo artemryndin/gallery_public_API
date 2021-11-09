@@ -47,22 +47,6 @@ export const galleryConfig: AWSPartitial = {
       ],
     },
 
-    // uploadPicture: {
-    //   handler: 'api/gallery/handler.uploadPicture',
-    //   memorySize: 128,
-    //   events: [
-    //     {
-    //       http: {
-    //         path: '/upload',
-    //         method: 'post',
-    //         integration: 'lambda-proxy',
-    //         cors: true,
-    //         authorizer: 'jwtauth',
-    //       },
-    //     },
-    //   ],
-    // },
-
     savePictureToDB: {
       handler: 'api/gallery/handler.savePictureToDB',
       memorySize: 128,
@@ -94,7 +78,7 @@ export const galleryConfig: AWSPartitial = {
     },
 
     jwtauth: {
-      handler: 'api/auth/my_auth.myJWTAuth',
+      handler: 'api/auth/authorizer.authorizer',
       memorySize: 128,
     },
   },

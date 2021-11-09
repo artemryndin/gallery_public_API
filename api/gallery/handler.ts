@@ -1,11 +1,12 @@
 import { GalleryManager } from './gallery.manager';
-import { GalleryRequestParams, UploadResponse } from './gallery.interfaces';
+import { GalleryRequestParams, GalleryResponse, UploadResponse } from './gallery.interfaces';
 import { createResponse } from '@helper/http-api/response';
 import { errorHandler } from '@helper/http-api/error-handler';
-import { APIGatewayProxyHandlerV2, S3Event } from 'aws-lambda';
+import { APIGatewayProxyHandlerV2, APIGatewayProxyResult, S3Event } from 'aws-lambda';
 import { log } from '@helper/logger';
+import { S3Handler } from 'aws-lambda';
 
-export const getGalleryPage: APIGatewayProxyHandlerV2 = async (event) => {
+export const getGalleryPage: APIGatewayProxyHandlerV2<GalleryResponse | APIGatewayProxyResult> = async (event) => {
   log(event);
 
   try {
@@ -22,8 +23,7 @@ export const getGalleryPage: APIGatewayProxyHandlerV2 = async (event) => {
 
       const manager = new GalleryManager();
       const result = await manager.getGalleryPage(galleryRequest);
-
-      return createResponse(result.statusCode, result.data);
+      return result;
     } else {
       return createResponse(400, 'query string parameters or user data not provided');
     }
@@ -32,7 +32,7 @@ export const getGalleryPage: APIGatewayProxyHandlerV2 = async (event) => {
   }
 };
 
-export const getS3UploadLink: APIGatewayProxyHandlerV2 = async (event) => {
+export const getS3UploadLink: APIGatewayProxyHandlerV2<UploadResponse> = async (event) => {
   log(event);
 
   try {
@@ -41,7 +41,7 @@ export const getS3UploadLink: APIGatewayProxyHandlerV2 = async (event) => {
     const user: string = event.requestContext.authorizer.user;
     console.log(`User: ${user}`);
     const result: UploadResponse = await manager.getS3SignedLink(user);
-    return createResponse(result.statusCode, result.message);
+    return result;
   } catch (error) {
     return errorHandler(error);
   }

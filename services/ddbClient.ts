@@ -1,6 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { getEnv } from '@helper/environment';
 
-const REGION: string = 'eu-central-1';
+const REGION: string = getEnv('GALLERY_TABLE');
 const ddbClient = new DynamoDBClient({ region: REGION });
 
 export { ddbClient };

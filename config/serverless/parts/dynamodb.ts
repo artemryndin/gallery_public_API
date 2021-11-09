@@ -1,3 +1,4 @@
+import { getEnv } from '@helper/environment';
 import { AWSPartitial } from '../types';
 
 export const dynamoDBConfig: AWSPartitial = {
@@ -33,7 +34,7 @@ export const dynamoDBConfig: AWSPartitial = {
         DeletionPolicy: 'Retain',
         Type: 'AWS::DynamoDB::Table',
         Properties: {
-          TableName: 'aryndin_gallery_v2',
+          TableName: '${file(env.yml):${self:provider.stage}.GALLERY_TABLE}',
           KeySchema: [
             {
               AttributeName: 'email',

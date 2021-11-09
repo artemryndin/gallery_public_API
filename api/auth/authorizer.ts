@@ -7,7 +7,7 @@ import { getEnv } from '@helper/environment';
 
 const UNAUTHORIZED = new Error('Unauthorized');
 
-export const myJWTAuth = async (event) => {
+export const authorizer = async (event) => {
   log(event);
 
   const token = event.authorizationToken.split(' ')[1];

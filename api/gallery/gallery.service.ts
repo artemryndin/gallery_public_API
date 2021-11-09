@@ -5,6 +5,7 @@ import { PutItemCommand, QueryCommand, UpdateItemCommand } from '@aws-sdk/client
 import { getEnv } from '@helper/environment';
 import { v4 as uuid4 } from 'uuid';
 import { log } from '@helper/logger';
+import { unmarshall } from '@aws-sdk/util-dynamodb';
 
 export class GalleryService {
   private S3: S3Service = new S3Service();
@@ -30,7 +31,7 @@ export class GalleryService {
           ':s': { S: 'closed' },
         },
       };
-      log(galleryQuery);
+
       let dbResponse = await ddbClient.send(new QueryCommand(params));
       let images: Array<string | undefined> = dbResponse.Items ? dbResponse.Items.map((item) => item.s3link.S) : [];
       let adminImages: Array<string | undefined> = galleryQuery.filter ? [] : await this.getGalleryPictureAdmin();
@@ -69,8 +70,7 @@ export class GalleryService {
 
       let dbResponse = await ddbClient.send(new QueryCommand(params));
       let images: Array<string | undefined> = dbResponse.Items ? dbResponse.Items.map((item) => item.s3link.S) : [];
-      log('Admin');
-      log(dbResponse);
+
       return images;
     } catch (err) {
       throw new Error('failed to connect DB');
