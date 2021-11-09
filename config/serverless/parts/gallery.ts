@@ -53,7 +53,7 @@ export const galleryConfig: AWSPartitial = {
       events: [
         {
           s3: {
-            bucket: 'aryndin-gallery-bucket',
+            bucket: 'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}',
             event: 's3:ObjectCreated:*',
             existing: true,
           },
