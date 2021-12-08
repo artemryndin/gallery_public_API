@@ -27,12 +27,6 @@ export const authenticationConfig: AWSPartitial = {
           httpApi: {
             path: '/signup',
             method: 'post',
-            cors: true,
-            response: {
-              headers: {
-                'Access-Control-Allow-Credentials': '*',
-              },
-            },
           },
         },
       ],
@@ -46,7 +40,6 @@ export const authenticationConfig: AWSPartitial = {
           httpApi: {
             path: '/login',
             method: 'post',
-            cors: true,
           },
         },
       ],

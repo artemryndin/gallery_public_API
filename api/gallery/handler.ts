@@ -4,16 +4,15 @@ import { createResponse } from '@helper/http-api/response';
 import { errorHandler } from '@helper/http-api/error-handler';
 import { APIGatewayProxyHandlerV2, APIGatewayProxyResult, S3Event } from 'aws-lambda';
 import { log } from '@helper/logger';
-import { S3Handler } from 'aws-lambda';
 
 export const getGalleryPage: APIGatewayProxyHandlerV2<GalleryResponse | APIGatewayProxyResult> = async (event) => {
   log(event);
 
   try {
     if (event.queryStringParameters && event.requestContext.authorizer) {
-      let QueryStringParams = event.queryStringParameters;
+      const QueryStringParams = event.queryStringParameters;
 
-      let galleryRequest: GalleryRequestParams = {
+      const galleryRequest: GalleryRequestParams = {
         page: Number(QueryStringParams.page) ?? 1,
         limit: Number(QueryStringParams!.limit) ?? 5,
         filter: QueryStringParams!.filter === 'true' ? true : false,
@@ -39,7 +38,7 @@ export const getS3UploadLink: APIGatewayProxyHandlerV2<UploadResponse> = async (
     const manager = new GalleryManager();
     //@ts-ignore
     const user: string = event.requestContext.authorizer.user;
-    console.log(`User: ${user}`);
+    log(`User: ${user}`);
     const result: UploadResponse = await manager.getS3SignedLink(user);
     return result;
   } catch (error) {

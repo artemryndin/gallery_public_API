@@ -14,7 +14,7 @@ export class GalleryService {
 
   async getGalleryPage(galleryQuery: GalleryRequestParams): Promise<GalleryResponse> {
     try {
-      let params = {
+      const params = {
         TableName: this.galleryTable,
         KeyConditionExpression: `#E = :e AND begins_with(#UD, :i)`,
         FilterExpression: '#ST = :s',
@@ -32,10 +32,10 @@ export class GalleryService {
         },
       };
 
-      let dbResponse = await ddbClient.send(new QueryCommand(params));
-      let images: Array<string | undefined> = dbResponse.Items ? dbResponse.Items.map((item) => item.s3link.S) : [];
-      let adminImages: Array<string | undefined> = galleryQuery.filter ? [] : await this.getGalleryPictureAdmin();
-      let galleryResponse: GalleryPayload = this.createGalleryResponse(
+      const dbResponse = await ddbClient.send(new QueryCommand(params));
+      const images: Array<string | undefined> = dbResponse.Items ? dbResponse.Items.map((item) => item.s3link.S) : [];
+      const adminImages: Array<string | undefined> = galleryQuery.filter ? [] : await this.getGalleryPictureAdmin();
+      const galleryResponse: GalleryPayload = this.createGalleryResponse(
         images,
         adminImages,
         galleryQuery.limit,
@@ -50,7 +50,7 @@ export class GalleryService {
 
   async getGalleryPictureAdmin(): Promise<Array<string | undefined>> {
     try {
-      let params = {
+      const params = {
         TableName: this.galleryTable,
         KeyConditionExpression: `#E = :e AND begins_with(#UD, :i)`,
         FilterExpression: '#ST = :s',
@@ -68,8 +68,8 @@ export class GalleryService {
         },
       };
 
-      let dbResponse = await ddbClient.send(new QueryCommand(params));
-      let images: Array<string | undefined> = dbResponse.Items ? dbResponse.Items.map((item) => item.s3link.S) : [];
+      const dbResponse = await ddbClient.send(new QueryCommand(params));
+      const images: Array<string | undefined> = dbResponse.Items ? dbResponse.Items.map((item) => item.s3link.S) : [];
 
       return images;
     } catch (err) {
@@ -92,13 +92,13 @@ export class GalleryService {
       },
     };
 
-    let result = await ddbClient.send(new PutItemCommand(params));
+    const result = await ddbClient.send(new PutItemCommand(params));
     log(result);
     return { statusCode: 200, message: link };
   }
 
-  async saveFileToDB(user: string, pictureID: string, size: string) {
-    let s3link: string = this.S3.getPreSignedGetUrl(`${user}/${pictureID}`, this.galleryBucket);
+  async saveFileToDB(user: string, pictureID: string, size: string): Promise<void> {
+    const s3link: string = this.S3.getPreSignedGetUrl(`${user}/${pictureID}`, this.galleryBucket);
 
     const params = {
       TableName: this.galleryTable,
@@ -121,7 +121,7 @@ export class GalleryService {
 
     try {
       console.log(`Waiting for data to be updated in DB`);
-      let result = await ddbClient.send(new UpdateItemCommand(params)).catch((err) => log({ error: err }));
+      const result = await ddbClient.send(new UpdateItemCommand(params)).catch((err) => log({ error: err }));
       log(result);
     } catch (error) {
       log({ err: 'DB write operation failed' });
@@ -135,10 +135,10 @@ export class GalleryService {
     limit: number,
     page: number
   ): GalleryPayload {
-    let s3LinksArray: Array<string | undefined> = arr1
+    const s3LinksArray: Array<string | undefined> = arr1
       .concat(arr2)
       .slice((page - 1) * limit, (page - 1) * limit + limit);
-    let objectsArr: Array<string> = s3LinksArray.map((elem) => (elem === undefined ? '#' : elem));
+    const objectsArr: Array<string> = s3LinksArray.map((elem) => (elem === undefined ? '#' : elem));
 
     return {
       objects: objectsArr,

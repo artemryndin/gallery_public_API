@@ -4,6 +4,8 @@ import { galleryConfig } from './config/serverless/parts/gallery';
 import { joinParts } from './config/serverless/utils';
 import { dynamoDBConfig } from './config/serverless/parts/dynamodb';
 import { s3BucketConfig } from './config/serverless/parts/s3';
+import { shutterstockConfig } from './config/serverless/parts/shutterstock';
+import { s3SubclipBucketConfig } from './config/serverless/parts/s3_subclips';
 
 const masterConfig: AWS = {
   service: 'aryndin-sls',
@@ -69,4 +71,11 @@ const masterConfig: AWS = {
   ],
 };
 
-module.exports = joinParts(masterConfig, [authenticationConfig, galleryConfig, dynamoDBConfig, s3BucketConfig]);
+module.exports = joinParts(masterConfig, [
+  authenticationConfig,
+  galleryConfig,
+  dynamoDBConfig,
+  s3BucketConfig,
+  s3SubclipBucketConfig,
+  shutterstockConfig,
+]);

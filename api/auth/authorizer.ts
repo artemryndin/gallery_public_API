@@ -12,7 +12,7 @@ export const authorizer = async (event) => {
 
   const token = event.authorizationToken.split(' ')[1];
   try {
-    let user = JWT.verify(token, getEnv('TOKEN_KEY'));
+    const user = JWT.verify(token, getEnv('TOKEN_KEY'));
     return generatePolicy('user', 'Allow', '*', { user: user.email, body: event.body });
   } catch (err) {
     return generatePolicy('user', 'Deny', '*', {});

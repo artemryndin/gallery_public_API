@@ -1,6 +1,6 @@
 import { AWSPartitial } from '../types';
 
-export const galleryConfig: AWSPartitial = {
+export const shutterstockConfig: AWSPartitial = {
   provider: {
     environment: {},
     iam: {
@@ -14,6 +14,8 @@ export const galleryConfig: AWSPartitial = {
               'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}/index/*',
               'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}',
               'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}/*',
+              'arn:aws:s3:::${file(env.yml):${self:provider.stage}.SUBCLIPS_BUCKET}',
+              'arn:aws:s3:::${file(env.yml):${self:provider.stage}.SUBCLIPS_BUCKET}/*',
             ],
           },
         ],
@@ -30,48 +32,32 @@ export const galleryConfig: AWSPartitial = {
       },
     },
   },
-
   functions: {
-    getGalleryPage: {
-      handler: 'api/gallery/handler.getGalleryPage',
+    findImages: {
+      handler: 'api/shutterstock/handler.findImages',
       memorySize: 128,
       events: [
         {
           http: {
-            path: '/gallery',
+            path: '/shutterstock',
             method: 'get',
-            authorizer: 'jwtauth',
-            cors: true,
-          },
-        },
-      ],
-    },
-
-    savePictureToDB: {
-      handler: 'api/gallery/handler.savePictureToDB',
-      memorySize: 128,
-      events: [
-        {
-          s3: {
-            bucket: 'aryndin-gallery-s3bucket-prod',
-            event: 's3:ObjectCreated:*',
-            existing: true,
-          },
-        },
-      ],
-    },
-
-    getS3UploadLink: {
-      handler: 'api/gallery/handler.getS3UploadLink',
-      memorySize: 128,
-      events: [
-        {
-          http: {
-            path: '/s3link',
-            method: 'get',
-            cors: true,
             integration: 'lambda-proxy',
-            authorizer: 'jwtauth',
+            cors: true,
+          },
+        },
+      ],
+    },
+
+    chooseImages: {
+      handler: 'api/shutterstock/handler.chooseImages',
+      memorySize: 128,
+      events: [
+        {
+          http: {
+            path: '/shutterstock',
+            method: 'post',
+            integration: 'lambda-proxy',
+            cors: true,
           },
         },
       ],
