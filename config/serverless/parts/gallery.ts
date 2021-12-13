@@ -25,7 +25,7 @@ export const galleryConfig: AWSPartitial = {
           type: 'request',
           enableSimpleResponses: true,
           functionName: 'jwtauth',
-          identitySource: 'request.header.Authorization',
+          identitySource: '$request.header.Authorization',
         },
       },
     },
@@ -40,8 +40,8 @@ export const galleryConfig: AWSPartitial = {
           http: {
             path: '/gallery',
             method: 'get',
-            authorizer: 'jwtauth',
             cors: true,
+            authorizer: 'jwtauth',
           },
         },
       ],

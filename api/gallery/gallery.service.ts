@@ -1,11 +1,10 @@
-import { GalleryRequestParams, GalleryResponse, GalleryPayload, UploadResponse } from './gallery.interfaces';
-import { S3Service } from '@services/s3.service';
-import { ddbClient } from '@services/ddbClient';
 import { PutItemCommand, QueryCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { getEnv } from '@helper/environment';
-import { v4 as uuid4 } from 'uuid';
 import { log } from '@helper/logger';
-import { unmarshall } from '@aws-sdk/util-dynamodb';
+import { ddbClient } from '@services/ddbClient';
+import { S3Service } from '@services/s3.service';
+import { v4 as uuid4 } from 'uuid';
+import { GalleryPayload, GalleryRequestParams, GalleryResponse, UploadResponse } from './gallery.interfaces';
 
 export class GalleryService {
   private S3: S3Service = new S3Service();
@@ -69,9 +68,7 @@ export class GalleryService {
       };
 
       const dbResponse = await ddbClient.send(new QueryCommand(params));
-      const images: Array<string | undefined> = dbResponse.Items ? dbResponse.Items.map((item) => item.s3link.S) : [];
-
-      return images;
+      return dbResponse.Items ? dbResponse.Items.map((item) => item.s3link.S) : [];
     } catch (err) {
       throw new Error('failed to connect DB');
     }

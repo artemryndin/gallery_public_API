@@ -39,7 +39,7 @@ export class ShutterstockService {
     });
   }
 
-  async saveImageToS3(image: ShutterstockImage, user: string): Promise<void> {
+  async saveOriginalImageToS3(image: ShutterstockImage, user: string): Promise<void> {
     const response = await axios.get(image.url, { responseType: 'arraybuffer' });
     const buffer = Buffer.from(response.data, 'utf-8');
     await this.S3.put(`${user}/shutterstock_${image.id}`, buffer.toString(), this.galleryBucket);
@@ -90,4 +90,6 @@ export class ShutterstockService {
     const dynamoReply = await ddbClient.send(new UpdateItemCommand(params));
     log(dynamoReply);
   }
+
+  async createSubClip(): Promise<void> {}
 }

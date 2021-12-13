@@ -22,7 +22,7 @@ export class ShutterstockManager {
       throw new HttpError(400, 'No data', 'Images list is empty');
     }
     for (const elem of images) {
-      await this.service.saveImageToS3(elem, user);
+      await this.service.saveOriginalImageToS3(elem, user);
     }
   }
 }
