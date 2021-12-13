@@ -91,5 +91,9 @@ export class ShutterstockService {
     log(dynamoReply);
   }
 
-  async createSubClip(): Promise<void> {}
+  async createSubclip(key: string): Promise<void> {
+    const originalImage = await this.S3.get(key, this.galleryBucket);
+    const subclipBuffer = await Sharp(originalImage.Body).resize(512, 250).toBuffer();
+    await this.S3.put(key, subclipBuffer, this.subclipsBucket);
+  }
 }

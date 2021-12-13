@@ -25,4 +25,8 @@ export class ShutterstockManager {
       await this.service.saveOriginalImageToS3(elem, user);
     }
   }
+
+  async createSubclip(key: string): Promise<void> {
+    return this.service.createSubclip(key);
+  }
 }

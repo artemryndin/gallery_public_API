@@ -8,7 +8,7 @@ import { ShutterstockImage } from './shutterstock.interface';
 import { ShutterstockManager } from './shutterstock.manager';
 
 export const findImages: APIGatewayProxyHandlerV2<Array<ShutterstockImage> | undefined> = async (event) => {
-  // log(event);
+  log(event);
 
   try {
     const manager = new ShutterstockManager();
@@ -23,7 +23,7 @@ export const findImages: APIGatewayProxyHandlerV2<Array<ShutterstockImage> | und
 };
 
 export const chooseImages: APIGatewayProxyHandlerV2<void> = async (event) => {
-  // log(event);
+  log(event);
 
   try {
     const manager = new ShutterstockManager();
@@ -36,11 +36,14 @@ export const chooseImages: APIGatewayProxyHandlerV2<void> = async (event) => {
   }
 };
 
-// export const createImageSubclip = async(event: S3Event) => {
-//   log(event);
-//
-//   try {
-//     const manager = new ShutterstockManager();
-//
-//   }
-// }
+export const createImageSubclip = async (event: S3Event) => {
+  log(event);
+
+  try {
+    const manager = new ShutterstockManager();
+    const key = event.Records[0].s3.object.key;
+    return await manager.createSubclip(key);
+  } catch (err) {
+    errorHandler(err);
+  }
+};

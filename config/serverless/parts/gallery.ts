@@ -41,7 +41,9 @@ export const galleryConfig: AWSPartitial = {
             path: '/gallery',
             method: 'get',
             cors: true,
-            authorizer: 'jwtauth',
+            authorizer: {
+              name: 'jwtauth',
+            },
           },
         },
       ],
@@ -71,7 +73,9 @@ export const galleryConfig: AWSPartitial = {
             method: 'get',
             cors: true,
             integration: 'lambda-proxy',
-            authorizer: 'jwtauth',
+            authorizer: {
+              name: 'jwtauth',
+            },
           },
         },
       ],

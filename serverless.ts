@@ -26,9 +26,9 @@ const masterConfig: AWS = {
     tags: {
       client: '${file(./env.yml):${self:provider.stage}.CLIENT}',
     },
-    // logs: {
-    //   httpApi: true,
-    // },
+    logs: {
+      httpApi: true,
+    },
     httpApi: {
       useProviderTags: true,
       payload: '2.0',

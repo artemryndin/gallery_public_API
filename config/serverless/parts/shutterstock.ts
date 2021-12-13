@@ -43,7 +43,9 @@ export const shutterstockConfig: AWSPartitial = {
             method: 'get',
             integration: 'lambda-proxy',
             cors: true,
-            authorizer: 'jwtauth',
+            authorizer: {
+              name: 'jwtauth',
+            },
           },
         },
       ],
@@ -59,7 +61,9 @@ export const shutterstockConfig: AWSPartitial = {
             method: 'post',
             integration: 'lambda-proxy',
             cors: true,
-            authorizer: 'jwtauth',
+            authorizer: {
+              name: 'jwtauth',
+            },
           },
         },
       ],
