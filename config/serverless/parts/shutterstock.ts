@@ -69,6 +69,20 @@ export const shutterstockConfig: AWSPartitial = {
       ],
     },
 
+    createSubclip: {
+      handler: 'api/shutterstock/handler.createImageSubclip',
+      memorySize: 128,
+      events: [
+        {
+          s3: {
+            bucket: 'aryndin-gallery-s3bucket-test',
+            event: 's3:ObjectCreated:*',
+            existing: true,
+          },
+        },
+      ],
+    },
+
     jwtauth: {
       handler: 'api/auth/authorizer.authorizer',
       memorySize: 128,

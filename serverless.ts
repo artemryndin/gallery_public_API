@@ -26,9 +26,9 @@ const masterConfig: AWS = {
     tags: {
       client: '${file(./env.yml):${self:provider.stage}.CLIENT}',
     },
-    logs: {
-      httpApi: true,
-    },
+    // logs: {
+    //   httpApi: true,
+    // },
     httpApi: {
       useProviderTags: true,
       payload: '2.0',
@@ -44,6 +44,9 @@ const masterConfig: AWS = {
       webpackConfig: 'webpack.config.js',
       includeModules: {
         forceExclude: ['aws-sdk'],
+      },
+      packagerOptions: {
+        scripts: ['npm rebuild --arch=x64 --platform=linux sharp'],
       },
       concurrency: 5,
       serializedCompile: true,

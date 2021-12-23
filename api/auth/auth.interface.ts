@@ -7,8 +7,7 @@ interface ErrorMessage {
 }
 
 export interface AuthenticationResponse {
-  statusCode: number;
-  content: JWTToken | ErrorMessage;
+  token: string;
 }
 
 export interface SignUpErrorMessage {
@@ -20,6 +19,5 @@ export interface SignUpMessage {
 }
 
 export interface SignUpResponse {
-  statusCode: number;
-  message: SignUpErrorMessage | SignUpMessage;
+  info: SignUpErrorMessage | SignUpMessage;
 }

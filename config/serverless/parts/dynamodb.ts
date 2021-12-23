@@ -31,7 +31,7 @@ export const dynamoDBConfig: AWSPartitial = {
   resources: {
     Resources: {
       galleryTable: {
-        // DeletionPolicy: 'Retain',
+        DeletionPolicy: 'Retain',
         Type: 'AWS::DynamoDB::Table',
         Properties: {
           TableName: '${file(env.yml):${self:provider.stage}.GALLERY_TABLE}',

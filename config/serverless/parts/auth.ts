@@ -24,9 +24,11 @@ export const authenticationConfig: AWSPartitial = {
       memorySize: 128,
       events: [
         {
-          httpApi: {
+          http: {
             path: '/signup',
             method: 'post',
+            cors: true,
+            integration: 'lambda-proxy',
           },
         },
       ],
@@ -37,9 +39,11 @@ export const authenticationConfig: AWSPartitial = {
       memorySize: 128,
       events: [
         {
-          httpApi: {
+          http: {
             path: '/login',
             method: 'post',
+            cors: true,
+            integration: 'lambda-proxy',
           },
         },
       ],

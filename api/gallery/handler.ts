@@ -15,18 +15,20 @@ export const getGalleryPage: APIGatewayProxyHandlerV2<GalleryResponse | APIGatew
       const galleryRequest: GalleryRequestParams = {
         page: Number(QueryStringParams.page) ?? 1,
         limit: Number(QueryStringParams!.limit) ?? 5,
-        filter: QueryStringParams!.filter === 'true' ? true : false,
+        filter: QueryStringParams!.filter === 'true',
         //@ts-ignore
         user: event.requestContext.authorizer.user,
       };
 
       const manager = new GalleryManager();
       const result = await manager.getGalleryPage(galleryRequest);
-      return result;
+      log(result);
+      return createResponse(200, result);
     } else {
       return createResponse(400, 'query string parameters or user data not provided');
     }
   } catch (err) {
+    log(err);
     return errorHandler(err);
   }
 };
@@ -40,8 +42,10 @@ export const getS3UploadLink: APIGatewayProxyHandlerV2<UploadResponse> = async (
     const user: string = event.requestContext.authorizer.user;
     log(`User: ${user}`);
     const result: UploadResponse = await manager.getS3SignedLink(user);
-    return result;
+    log(result);
+    return createResponse(200, result);
   } catch (error) {
+    log(error);
     return errorHandler(error);
   }
 };
@@ -55,5 +59,6 @@ export const savePictureToDB = async (event: S3Event) => {
     return;
   } catch (err) {
     log({ error: 'savePictureToDB handler failed' });
+    errorHandler(err);
   }
 };

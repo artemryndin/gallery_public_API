@@ -1,55 +1,18 @@
-// import { SNS } from 'aws-sdk';
-// import {
-//   CreateEndpointResponse,
-//   CreatePlatformEndpointInput,
-//   DeleteEndpointInput,
-//   PublishInput,
-// } from 'aws-sdk/clients/sns';
-//
-// export class SNSService {
-//   private sns: SNS = new SNS();
-//
-//   public createPlatformEndpoint(registrationId: string, registrationType: 'FCM' | 'APNS'): Promise<string> {
-//     const params: CreatePlatformEndpointInput = {
-//       PlatformApplicationArn: registrationType === 'FCM' ?
-//       process.env.SNS_ANDROID_APPLICATION_ARN : process.env.SNS_IOS_APPLICATION_ARN,
-//       Token: registrationId,
-//     };
-//     return this.sns.createPlatformEndpoint(params).promise()
-//       .then((result: CreateEndpointResponse) => result.EndpointArn);
-//   }
-//
-//   public deleteEndpoint(endpointArn: string): Promise<any> {
-//     const params: DeleteEndpointInput = {
-//       EndpointArn: endpointArn,
-//     };
-//     return this.sns.deleteEndpoint(params).promise();
-//   }
-//
-//   public publish(endpointArn: string, registrationType: 'FCM' | 'APNS', message: string) {
-//     let messageBody;
-//     let messageStructure: string;
-//     if (registrationType === 'FCM') {
-//       messageBody = JSON.stringify({
-//         default: null,
-//         GCM: JSON.stringify({
-//           data: {
-//             message,
-//           },
-//         }),
-//       });
-//       messageStructure = 'json';
-//     } else {
-//       messageBody = message;
-//     }
-//
-//     const params: PublishInput = {
-//       Message: messageBody,
-//       TargetArn: endpointArn,
-//     };
-//     if (messageStructure) {
-//       params.MessageStructure = messageStructure;
-//     }
-//     return this.sns.publish(params).promise();
-//   }
-// }
+import { SNSClient } from '@aws-sdk/client-sns';
+import { CreateTopicCommand } from '@aws-sdk/client-sns';
+import { getEnv } from '@helper/environment';
+import { log } from '@helper/logger';
+
+const REGION = getEnv('REGION');
+const snsClient = new SNSClient({ region: REGION });
+const params = { Name: getEnv('SNS_TOPIC_NAME') };
+
+export const run = async () => {
+  try {
+    const data = await snsClient.send(new CreateTopicCommand(params));
+    log('Succeed', data);
+    return data;
+  } catch (err) {
+    log('Error', err.stack);
+  }
+};

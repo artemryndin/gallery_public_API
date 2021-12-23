@@ -1,4 +1,5 @@
 import { PutItemCommand, QueryCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
+import { HttpInternalServerError } from '@errors/http';
 import { getEnv } from '@helper/environment';
 import { log } from '@helper/logger';
 import { ddbClient } from '@services/ddbClient';
@@ -70,7 +71,7 @@ export class GalleryService {
       const dbResponse = await ddbClient.send(new QueryCommand(params));
       return dbResponse.Items ? dbResponse.Items.map((item) => item.s3link.S) : [];
     } catch (err) {
-      throw new Error('failed to connect DB');
+      throw new HttpInternalServerError('failed to connect DB');
     }
   }
 
@@ -91,7 +92,7 @@ export class GalleryService {
 
     const result = await ddbClient.send(new PutItemCommand(params));
     log(result);
-    return { statusCode: 200, message: link };
+    return { s3UploadLink: link };
   }
 
   async saveFileToDB(user: string, pictureID: string, size: string): Promise<void> {

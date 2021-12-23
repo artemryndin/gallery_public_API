@@ -9,7 +9,7 @@ export interface ShutterstockSearchParameters {
   color?: string;
   contributor?: string[];
   contributor_county?: string[];
-  fields: string;
+  fields?: string;
   height_from?: number;
   height_to?: number;
   image_type?: 'photo' | 'illustration' | 'vector';
@@ -39,7 +39,7 @@ export interface ShutterstockSearchParameters {
 
 export interface ShutterstockImageMeta {
   id: string;
-  aspect: number;
+  aspect?: number;
   contributor_id: string;
   description: string;
   image_type: string;

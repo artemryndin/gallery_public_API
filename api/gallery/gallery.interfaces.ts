@@ -25,8 +25,8 @@ export interface UploadErrorMessage {
 }
 
 export interface UploadResponse {
-  statusCode: number;
-  message: UploadMessage | UploadErrorMessage | string;
+  message?: UploadMessage | UploadErrorMessage | string;
+  s3UploadLink?: string;
 }
 
 export interface ImageObject {

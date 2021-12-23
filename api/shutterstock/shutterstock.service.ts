@@ -9,7 +9,7 @@ import { ddbClient } from '@services/ddbClient';
 import * as sstk from 'shutterstock-api';
 import { ShutterstockSearchParameters, ShutterstockImage } from './shutterstock.interface';
 
-sstk.setAccessToken(`Bearer ${getEnv('SHUTTERSTOCK_TOCKEN')}`);
+sstk.setAccessToken(`${getEnv('SHUTTERSTOCK_TOCKEN')}`);
 
 export class ShutterstockService {
   private imagesApi: sstk.ImagesApi;
@@ -25,7 +25,7 @@ export class ShutterstockService {
   async findImages(query: ShutterstockSearchParameters): Promise<Array<ShutterstockImage>> {
     const reply = await this.imagesApi.searchImages(query);
     if (!reply.data) {
-      throw new HttpError(500, 'request failed', 'Request to Shutterstock api returned empty body');
+      throw new HttpError(500, 'request failed', 'Request to Shutterstock API failed');
     }
     return reply.data.map((elem) => {
       return {
@@ -42,6 +42,7 @@ export class ShutterstockService {
   async saveOriginalImageToS3(image: ShutterstockImage, user: string): Promise<void> {
     const response = await axios.get(image.url, { responseType: 'arraybuffer' });
     const buffer = Buffer.from(response.data, 'utf-8');
+    log('saving original image to GALLERY_BUCKET');
     await this.S3.put(`${user}/shutterstock_${image.id}`, buffer.toString(), this.galleryBucket);
     await this.presaveImageToDynamoDB(image, user);
     return;
@@ -49,7 +50,7 @@ export class ShutterstockService {
 
   async presaveImageToDynamoDB(image: ShutterstockImage, user: string): Promise<void> {
     const s3link: string = this.S3.getPreSignedGetUrl(`${user}/shutterstock_${image.id}`, this.galleryBucket);
-
+    log(`Saving ${image.id} to ${this.galleryTable}`);
     const params = {
       TableName: this.galleryTable,
       Item: {
@@ -57,7 +58,6 @@ export class ShutterstockService {
         user_data: { S: `image_${image.id}` },
         status: { S: 'open' },
         s3link: { S: `${s3link}` },
-        aspect: { S: `${image.aspect}` },
         contributor_id: { S: image.contributor_id },
         description: { S: image.description },
         image_type: { S: image.image_type },
@@ -94,6 +94,7 @@ export class ShutterstockService {
   async createSubclip(key: string): Promise<void> {
     const originalImage = await this.S3.get(key, this.galleryBucket);
     const subclipBuffer = await Sharp(originalImage.Body).resize(512, 250).toBuffer();
+    log('saving image to SUBCLIPS_BUCKET');
     await this.S3.put(key, subclipBuffer, this.subclipsBucket);
   }
 }
