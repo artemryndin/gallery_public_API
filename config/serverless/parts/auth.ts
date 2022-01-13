@@ -9,10 +9,7 @@ export const authenticationConfig: AWSPartitial = {
           {
             Effect: 'Allow',
             Action: ['dynamodb:*'],
-            Resource: [
-              'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}',
-              'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}/index/*',
-            ],
+            Resource: '*',
           },
         ],
       },

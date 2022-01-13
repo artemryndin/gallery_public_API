@@ -1,4 +1,3 @@
-import { getEnv } from '@helper/environment';
 import { AWSPartitial } from '../types';
 
 export const dynamoDBConfig: AWSPartitial = {
@@ -9,19 +8,8 @@ export const dynamoDBConfig: AWSPartitial = {
         statements: [
           {
             Effect: 'Allow',
-            Action: [
-              'dynamodb:DescribeTable',
-              'dynamodb:Query',
-              'dynamodb:Scan',
-              'dynamodb:GetItem',
-              'dynamodb:PutItem',
-              'dynamodb:DeleteItem',
-              'dynamodb:UpdateItem',
-            ],
-            Resource: [
-              'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}',
-              'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}/index/*',
-            ],
+            Action: ['dynamodb:*'],
+            Resource: '*',
           },
         ],
       },
@@ -31,7 +19,7 @@ export const dynamoDBConfig: AWSPartitial = {
   resources: {
     Resources: {
       galleryTable: {
-        DeletionPolicy: 'Retain',
+        DeletionPolicy: 'Delete',
         Type: 'AWS::DynamoDB::Table',
         Properties: {
           TableName: '${file(env.yml):${self:provider.stage}.GALLERY_TABLE}',

@@ -39,17 +39,28 @@ export class ShutterstockService {
     });
   }
 
-  async saveOriginalImageToS3(image: ShutterstockImage, user: string): Promise<void> {
+  // async saveOriginalImageToS3(image: ShutterstockImage, user: string): Promise<void> {
+  //   const response = await axios.get(image.url, { responseType: 'arraybuffer' });
+  //   const buffer = Buffer.from(response.data, 'utf-8');
+  //   log('saving original image to GALLERY_BUCKET');
+  //   await this.S3.put(`shutterstock/${user}/shutterstock_${image.id}`, buffer.toString(), this.galleryBucket);
+  //   await this.presaveImageToDynamoDB(image, user);
+  //   return;
+  // }
+  async saveOriginalImageToS3(image: ShutterstockImage): Promise<void> {
     const response = await axios.get(image.url, { responseType: 'arraybuffer' });
     const buffer = Buffer.from(response.data, 'utf-8');
     log('saving original image to GALLERY_BUCKET');
-    await this.S3.put(`${user}/shutterstock_${image.id}`, buffer.toString(), this.galleryBucket);
-    await this.presaveImageToDynamoDB(image, user);
+    await this.S3.put(`shutterstock/${image.user}/shutterstock_${image.id}`, buffer.toString(), this.galleryBucket);
+    await this.presaveImageToDynamoDB(image, image.user!);
     return;
   }
 
   async presaveImageToDynamoDB(image: ShutterstockImage, user: string): Promise<void> {
-    const s3link: string = this.S3.getPreSignedGetUrl(`${user}/shutterstock_${image.id}`, this.galleryBucket);
+    const s3link: string = this.S3.getPreSignedGetUrl(
+      `shutterstock/${user}/shutterstock_${image.id}`,
+      this.galleryBucket
+    );
     log(`Saving ${image.id} to ${this.galleryTable}`);
     const params = {
       TableName: this.galleryTable,
@@ -96,5 +107,24 @@ export class ShutterstockService {
     const subclipBuffer = await Sharp(originalImage.Body).resize(512, 250).toBuffer();
     log('saving image to SUBCLIPS_BUCKET');
     await this.S3.put(key, subclipBuffer, this.subclipsBucket);
+  }
+
+  async updateImageSubclipCreated(image_id: string, user: string): Promise<void> {
+    const params = {
+      TableName: this.galleryTable,
+      Key: {
+        email: { S: user },
+        user_data: { S: `image_${image_id}` },
+      },
+      UpdateExpression: 'SET #subclipCreated = :sbc',
+      ExpressionAttributeNames: {
+        '#subclipCreated': 'subclipCreated',
+      },
+      ExpressionAttributeValues: {
+        ':sbc': { BOOL: true },
+      },
+    };
+
+    const dynamoReply = await ddbClient.send(new UpdateItemCommand(params));
   }
 }

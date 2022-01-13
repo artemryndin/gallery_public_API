@@ -19,6 +19,7 @@ const envs: Record<string, string | undefined> = {
   PASSWORD_ENC_KEY: process.env.PASSWORD_ENC_KEY,
   GALLERY_BUCKET: process.env.GALLERY_BUCKET,
   GALLERY_TABLE: process.env.GALLERY_TABLE,
+  SHUTTERSTOCK_QUEUE: process.env.ShutterstockQueueUrl,
   SHUTTERSTOCK_TOCKEN: process.env.SHUTTERSTOCK_TOCKEN,
   SUBCLIPS_BUCKET: process.env.SUBCLIPS_BUCKET,
 };

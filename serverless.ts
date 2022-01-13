@@ -6,9 +6,10 @@ import { dynamoDBConfig } from './config/serverless/parts/dynamodb';
 import { s3BucketConfig } from './config/serverless/parts/s3';
 import { shutterstockConfig } from './config/serverless/parts/shutterstock';
 import { s3SubclipBucketConfig } from './config/serverless/parts/s3_subclips';
+import { SQSQueueConfig } from './config/serverless/parts/sqs';
 
 const masterConfig: AWS = {
-  service: 'aryndin-sls',
+  service: 'artryndin-sls',
   configValidationMode: 'warn',
   variablesResolutionMode: '20210326',
   unresolvedVariablesNotificationMode: 'error',
@@ -75,10 +76,11 @@ const masterConfig: AWS = {
 };
 
 module.exports = joinParts(masterConfig, [
+  SQSQueueConfig,
+  dynamoDBConfig,
+  // s3BucketConfig,
+  // s3SubclipBucketConfig,
   authenticationConfig,
   galleryConfig,
-  dynamoDBConfig,
-  s3BucketConfig,
-  s3SubclipBucketConfig,
   shutterstockConfig,
 ]);

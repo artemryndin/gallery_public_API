@@ -8,12 +8,13 @@ export const galleryConfig: AWSPartitial = {
         statements: [
           {
             Effect: 'Allow',
-            Action: ['dynamodb:*', 's3:*'],
+            Action: ['dynamodb:*', 's3:*', 'sqs:SendMessage'],
             Resource: [
               'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}',
               'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}/index/*',
               'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}',
               'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}/*',
+              // 'arn:aws:sqs:${file(env.yml):${self:provider.region}}:*:GalleryQueue',
             ],
           },
         ],
@@ -55,8 +56,13 @@ export const galleryConfig: AWSPartitial = {
       events: [
         {
           s3: {
-            bucket: 'aryndin-gallery-s3bucket-test',
+            bucket: '${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}',
             event: 's3:ObjectCreated:*',
+            rules: [
+              {
+                prefix: 'images/',
+              },
+            ],
             existing: true,
           },
         },

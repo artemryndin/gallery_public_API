@@ -1,3 +1,4 @@
+import { GetAtt } from '../cf-intristic-fn';
 import { AWSPartitial } from '../types';
 
 export const shutterstockConfig: AWSPartitial = {
@@ -8,14 +9,12 @@ export const shutterstockConfig: AWSPartitial = {
         statements: [
           {
             Effect: 'Allow',
-            Action: ['dynamodb:*', 's3:*'],
+            Action: ['dynamodb:*'],
             Resource: [
               'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}',
               'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}/index/*',
-              'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}',
-              'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}/*',
               'arn:aws:s3:::${file(env.yml):${self:provider.stage}.SUBCLIPS_BUCKET}',
-              'arn:aws:s3:::${file(env.yml):${self:provider.stage}.SUBCLIPS_BUCKET}/*',
+              'arn:aws:s3:::${file(env.yml):${self:provider.stage}.SUBCLIPS_BUCKET}/',
             ],
           },
         ],
@@ -69,14 +68,31 @@ export const shutterstockConfig: AWSPartitial = {
       ],
     },
 
+    saveOriginalImage: {
+      handler: 'api/shutterstock/handler.saveOriginalImage',
+      memorySize: 128,
+      events: [
+        {
+          sqs: {
+            arn: GetAtt('ShutterstockQueue.Arn'),
+          },
+        },
+      ],
+    },
+
     createSubclip: {
       handler: 'api/shutterstock/handler.createImageSubclip',
       memorySize: 128,
       events: [
         {
           s3: {
-            bucket: 'aryndin-gallery-s3bucket-test',
+            bucket: '${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}',
             event: 's3:ObjectCreated:*',
+            rules: [
+              {
+                prefix: 'shutterstock/',
+              },
+            ],
             existing: true,
           },
         },

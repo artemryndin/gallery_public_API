@@ -11,7 +11,7 @@ export const s3BucketConfig: AWSPartitial = {
             Action: ['s3:*'],
             Resource: [
               'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}',
-              'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}/*',
+              'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}/images',
             ],
           },
         ],

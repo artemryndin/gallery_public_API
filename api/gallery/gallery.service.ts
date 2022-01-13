@@ -77,7 +77,7 @@ export class GalleryService {
 
   async returnSignedPutURL(user: string): Promise<UploadResponse> {
     const id: string = uuid4();
-    const link = this.S3.getPreSignedPutUrl(`${user}/${id}`, this.galleryBucket);
+    const link = this.S3.getPreSignedPutUrl(`images/${user}/${id}`, this.galleryBucket);
     const params = {
       TableName: this.galleryTable,
       Item: {

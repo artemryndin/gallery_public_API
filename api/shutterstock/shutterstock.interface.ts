@@ -48,4 +48,5 @@ export interface ShutterstockImageMeta {
 
 export interface ShutterstockImage extends ShutterstockImageMeta {
   url: string;
+  user?: string;
 }

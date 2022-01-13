@@ -1,7 +1,7 @@
 import { errorHandler } from '@helper/http-api/error-handler';
 import { createResponse } from '@helper/http-api/response';
 import { log } from '@helper/logger';
-import { APIGatewayProxyHandlerV2 } from 'aws-lambda';
+import { APIGatewayProxyHandlerV2, SQSEvent, SQSHandler } from 'aws-lambda';
 import { S3Event } from 'aws-lambda/trigger/s3';
 import { ShutterstockImage, ShutterstockSearchParameters } from './shutterstock.interface';
 import { ShutterstockManager } from './shutterstock.manager';
@@ -38,6 +38,17 @@ export const chooseImages: APIGatewayProxyHandlerV2<void> = async (event) => {
   } catch (err) {
     log(err);
     errorHandler(err);
+  }
+};
+
+export const saveOriginalImage: SQSHandler = async (event) => {
+  log(event);
+  try {
+    const manager = new ShutterstockManager();
+    const picture = JSON.parse(event.Records[0].body);
+    await manager.savePicture(picture);
+  } catch (e) {
+    errorHandler(e);
   }
 };
 
