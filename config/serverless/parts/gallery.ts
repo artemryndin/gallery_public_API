@@ -8,13 +8,14 @@ export const galleryConfig: AWSPartitial = {
         statements: [
           {
             Effect: 'Allow',
-            Action: ['dynamodb:*', 's3:*', 'sqs:SendMessage'],
+            Action: ['dynamodb:*', 's3:*', 'sqs:SendMessage', 'SQS:*'],
+            // Resource: '*',
             Resource: [
               'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}',
               'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}/index/*',
               'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}',
               'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}/*',
-              // 'arn:aws:sqs:${file(env.yml):${self:provider.region}}:*:GalleryQueue',
+              // 'arn:aws:sqs:${file(env.yml):${self:provider.region}}.SQS_QUEUE',
             ],
           },
         ],
@@ -58,11 +59,20 @@ export const galleryConfig: AWSPartitial = {
           s3: {
             bucket: '${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}',
             event: 's3:ObjectCreated:*',
-            rules: [
-              {
-                prefix: 'images/',
-              },
-            ],
+            existing: true,
+          },
+        },
+      ],
+    },
+
+    updateSubclipStatus: {
+      handler: 'api/gallery/handler.updateSubclipStatus',
+      memorySize: 128,
+      events: [
+        {
+          s3: {
+            bucket: '${file(env.yml):${self:provider.stage}.SUBCLIPS_BUCKET}',
+            event: 's3:ObjectCreated:*',
             existing: true,
           },
         },

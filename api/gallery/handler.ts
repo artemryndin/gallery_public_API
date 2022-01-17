@@ -62,3 +62,14 @@ export const savePictureToDB = async (event: S3Event) => {
     errorHandler(err);
   }
 };
+
+export const updateSubclipStatus = async (event: S3Event) => {
+  log(event);
+  try {
+    const manager = new GalleryManager();
+    await manager.updateSubclipStatus(event);
+  } catch (err) {
+    log({ error: 'updateSubclipStatus handler failed' });
+    errorHandler(err);
+  }
+};

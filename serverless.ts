@@ -27,9 +27,6 @@ const masterConfig: AWS = {
     tags: {
       client: '${file(./env.yml):${self:provider.stage}.CLIENT}',
     },
-    // logs: {
-    //   httpApi: true,
-    // },
     httpApi: {
       useProviderTags: true,
       payload: '2.0',
@@ -78,8 +75,8 @@ const masterConfig: AWS = {
 module.exports = joinParts(masterConfig, [
   SQSQueueConfig,
   dynamoDBConfig,
-  // s3BucketConfig,
-  // s3SubclipBucketConfig,
+  s3BucketConfig,
+  s3SubclipBucketConfig,
   authenticationConfig,
   galleryConfig,
   shutterstockConfig,

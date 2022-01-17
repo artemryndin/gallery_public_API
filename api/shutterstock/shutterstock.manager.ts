@@ -26,18 +26,12 @@ export class ShutterstockManager {
       throw new HttpError(400, 'No data', 'Images list is empty');
     }
     for (const elem of images) {
-      // await this.service.saveOriginalImageToS3(elem, user);
       elem.user = user;
       await this.sqs.sendMessage(JSON.stringify(elem));
     }
-    return;
   }
 
   async savePicture(image: ShutterstockImage): Promise<void> {
     await this.service.saveOriginalImageToS3(image);
-  }
-
-  async createSubclip(key: string): Promise<void> {
-    return this.service.createSubclip(key);
   }
 }

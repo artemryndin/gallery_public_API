@@ -1,6 +1,4 @@
-import { getEnv } from '@helper/environment';
 import { log } from '@helper/logger';
-import { SQSService } from '@services/sqs.service';
 import { S3Event } from 'aws-lambda/trigger/s3';
 import { GalleryRequestParams, GalleryResponse, UploadResponse } from './gallery.interfaces';
 import { GalleryService } from './gallery.service';
@@ -23,16 +21,22 @@ export class GalleryManager {
     return this.service.returnSignedPutURL(user);
   }
 
-  async savePictureToDB(event: S3Event) {
+  async savePictureToDB(event: S3Event): Promise<void> {
     try {
       const user = decodeURIComponent(event.Records[0].s3.object.key.split('/')[0]);
       const filename = event.Records[0].s3.object.key.split('/')[1];
       const size = event.Records[0].s3.object.size.toString();
 
       await this.service.saveFileToDB(user, filename, size).then((data) => log(`${data} saved to DB`));
-      this.sqs.sendMessage({ QueueUrl: getEnv('GalleryQueueUrl'), MessageBody: event.Records[0].s3.object.key });
+      await this.service.createSubclip(`${user}/${filename}`);
     } catch (error) {
       log({ err: 'savePictureToDB manager failed' });
     }
+  }
+
+  async updateSubclipStatus(event: S3Event): Promise<void> {
+    const user = decodeURIComponent(event.Records[0].s3.object.key.split('/')[0]);
+    const filename = event.Records[0].s3.object.key.split('/')[1];
+    await this.service.updateSubclipStatus(user, filename);
   }
 }

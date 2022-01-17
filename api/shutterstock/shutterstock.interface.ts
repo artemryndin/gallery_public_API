@@ -46,7 +46,8 @@ export interface ShutterstockImageMeta {
   media_type: string;
 }
 
-export interface ShutterstockImage extends ShutterstockImageMeta {
+export interface ShutterstockImage /*extends ShutterstockImageMeta*/ {
+  id: string;
   url: string;
-  user?: string;
+  user: string;
 }
