@@ -9,13 +9,11 @@ export const galleryConfig: AWSPartitial = {
           {
             Effect: 'Allow',
             Action: ['dynamodb:*', 's3:*', 'sqs:SendMessage', 'SQS:*'],
-            // Resource: '*',
             Resource: [
               'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}',
               'arn:aws:dynamodb:*:*:table/${file(env.yml):${self:provider.stage}.GALLERY_TABLE}/index/*',
               'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}',
               'arn:aws:s3:::${file(env.yml):${self:provider.stage}.GALLERY_BUCKET}/*',
-              // 'arn:aws:sqs:${file(env.yml):${self:provider.region}}.SQS_QUEUE',
             ],
           },
         ],
